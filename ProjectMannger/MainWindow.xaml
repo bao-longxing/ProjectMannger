@@ -1,0 +1,938 @@
+﻿<Window x:Class="ProjectMannger.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ProjectMannger"
+        mc:Ignorable="d"
+        Title="研发工作台" Height="800" Width="1200"
+        MinWidth="800" MinHeight="500"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanResizeWithGrip"
+        Background="Transparent"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        SnapsToDevicePixels="True"
+        UseLayoutRounding="True">
+
+    <Window.Resources>
+        <!-- ====== 矢量图标几何数据 (viewBox 0 0 24 24) ====== -->
+        <Geometry x:Key="IconLayers">M12,2 L2,7 L12,12 L22,7 Z M2,12 L12,17 L22,12 M2,17 L12,22 L22,17</Geometry>
+        <Geometry x:Key="IconHome">M3,9 L12,2 L21,9 V20 A2,2 0 0 1 19,22 H5 A2,2 0 0 1 3,20 Z M9,22 V12 H15 V22</Geometry>
+        <Geometry x:Key="IconFolder">M22,19 A2,2 0 0 1 20,21 H4 A2,2 0 0 1 2,19 V5 A2,2 0 0 1 4,3 H9 L11,6 H19 A2,2 0 0 1 21,8 V19 Z</Geometry>
+        <Geometry x:Key="IconSliders">M4,21 V14 M4,10 V3 M12,21 V12 M12,8 V3 M20,21 V16 M20,12 V3 M1,14 H7 M9,8 H15 M17,16 H23</Geometry>
+        <Geometry x:Key="IconMoon">M21,12.79 A9,9 0 1 1 11.21,3 A7,7 0 0 0 21,12.79 Z</Geometry>
+        <Geometry x:Key="IconMonitor">M4,4 H20 A1,1 0 0 1 21,5 V14 A1,1 0 0 1 20,15 H4 A1,1 0 0 1 3,14 V5 A1,1 0 0 1 4,4 Z M9,18 H15 V15 H9 Z</Geometry>
+        <Geometry x:Key="IconCheck">M20,6 L9,17 L4,12</Geometry>
+        <Geometry x:Key="IconGrid">M3,3 H10 V10 H3 Z M14,3 H21 V10 H14 Z M3,14 H10 V21 H3 Z M14,14 H21 V21 H14 Z</Geometry>
+        <Geometry x:Key="IconLaptop">M4,5 H20 A1,1 0 0 1 21,6 V15 A1,1 0 0 1 20,16 H4 A1,1 0 0 1 3,15 V6 A1,1 0 0 1 4,5 Z M2,18 H22</Geometry>
+        <Geometry x:Key="IconCamera">M23,7 L16,7 L14,4 H10 L8,7 L1,7 A2,2 0 0 0 0,9 V19 A2,2 0 0 0 2,21 H22 A2,2 0 0 0 23,19 V9 A2,2 0 0 0 23,7 Z M12,17 A4,4 0 1 1 12,9 A4,4 0 0 1 12,17</Geometry>
+        <Geometry x:Key="IconPin">M12,2 C8.13,2 5,5.13 5,9 C5,14.25 12,22 12,22 C12,22 19,14.25 19,9 C19,5.13 15.87,2 12,2 Z M12,11.5 C10.62,11.5 9.5,10.38 9.5,9 C9.5,7.62 10.62,6.5 12,6.5 C13.38,6.5 14.5,7.62 14.5,9 C14.5,10.38 13.38,11.5 12,11.5 Z</Geometry>
+        <!-- 窗口控制图标 -->
+        <Geometry x:Key="IconMinimize">M4,12 L20,12</Geometry>
+        <Geometry x:Key="IconMaximize">M4,4 L20,4 L20,20 L4,20 Z</Geometry>
+        <Geometry x:Key="IconRestore">M4,8 L4,4 L16,4 L16,8 M8,8 L8,20 L20,20 L20,8</Geometry>
+        <Geometry x:Key="IconClose">M4,4 L20,20 M20,4 L4,20</Geometry>
+        <!-- 设置图标 -->
+        <Geometry x:Key="IconSettings">M12,15.5A3.5,3.5 0 0 1 8.5,12A3.5,3.5 0 0 1 12,8.5A3.5,3.5 0 0 1 15.5,12A3.5,3.5 0 0 1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.04 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.04 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z</Geometry>
+
+        <!-- ====== 窗口控制按钮样式 ====== -->
+        <Style x:Key="WindowControlButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{DynamicResource Theme.WinCtrlFg}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource Theme.WinCtrlHover}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource Theme.WinCtrlPressed}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 关闭按钮（红色悬停） -->
+        <Style x:Key="CloseButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{DynamicResource Theme.WinCtrlFg}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#EF4444"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#DC2626"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ====== 主按钮样式 ====== -->
+        <Style x:Key="PrimaryButton" TargetType="Button">
+            <Setter Property="Background" Value="#2563EB"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}"
+                                CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#1D4ED8"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#1E40AF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 默认 TextBlock 前景色（深色模式兼容） -->
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource Theme.TextTertiary}"/>
+        </Style>
+    </Window.Resources>
+
+    <!-- 外层阴影层（无圆角，阴影不被裁剪） -->
+    <Border Background="Transparent" CornerRadius="8">
+        <!-- 内层容器：圆角 + 背景（裁剪内容到圆角） -->
+        <Border x:Name="WindowBorder" Background="{DynamicResource Theme.WindowBg}" CornerRadius="8">
+            <Grid x:Name="RootGrid">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="36"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MinWidth="300"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="320" MinWidth="250"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Row 0: 自定义标题栏 -->
+            <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" x:Name="TitleBar">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <!-- 拖拽区域 -->
+                <Border Grid.Column="0" x:Name="DragArea" Background="Transparent" Cursor="Hand" MouseLeftButtonDown="DragArea_MouseLeftButtonDown"/>
+                <!-- 窗口控制按钮 -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <!-- 窗口置顶 -->
+                    <Button x:Name="BtnPin" Click="BtnPin_Click" Style="{StaticResource WindowControlButton}" 
+                            Width="36" Height="36" ToolTip="置顶窗口">
+                        <Path x:Name="IconPin" Data="{StaticResource IconPin}" Width="14" Height="14"
+                              Stretch="Uniform" Stroke="{DynamicResource Theme.TextMuted}" StrokeThickness="1.5"
+                              Fill="Transparent" VerticalAlignment="Center"/>
+                    </Button>
+                    <!-- 深色模式切换 -->
+                    <StackPanel x:Name="DarkModeToggle" Orientation="Horizontal" Cursor="Hand" 
+                                Margin="0,0,8,0" VerticalAlignment="Center" ToolTip="切换深色/浅色模式">
+                        <Path Data="{StaticResource IconMoon}" Width="14" Height="14"
+                              Stretch="Uniform" Stroke="{DynamicResource Theme.TextMuted}" StrokeThickness="2"
+                              Fill="Transparent" Margin="0,0,4,0" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="DarkModeText" Text="深色" FontSize="12" 
+                                   Foreground="{DynamicResource Theme.TextMuted}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <!-- 设置按钮 -->
+                    <Button x:Name="BtnSettings" Click="BtnSettings_Click" Style="{StaticResource WindowControlButton}" 
+                            Width="36" Height="36" ToolTip="设置">
+                        <Path Data="{StaticResource IconSettings}" Width="14" Height="14"
+                              Stretch="Uniform" Stroke="{DynamicResource Theme.TextMuted}" StrokeThickness="1.5"
+                              Fill="Transparent" VerticalAlignment="Center"/>
+                    </Button>
+                    <!-- 最小化 -->
+                    <Button x:Name="BtnMinimize" Click="BtnMinimize_Click" Style="{StaticResource WindowControlButton}" Width="46" Height="36">
+                        <Path Data="{StaticResource IconMinimize}" Stroke="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}" StrokeThickness="1.5" Stretch="Uniform" Width="10" Height="10"/>
+                    </Button>
+                    <!-- 最大化/还原 -->
+                    <Button x:Name="BtnMaximize" Click="BtnMaximize_Click" Style="{StaticResource WindowControlButton}" Width="46" Height="36">
+                        <Path x:Name="IconMaximize" Data="{StaticResource IconMaximize}" Stroke="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}" StrokeThickness="1.5" Stretch="Uniform" Width="10" Height="10" Fill="Transparent"/>
+                    </Button>
+                    <!-- 关闭 -->
+                    <Button x:Name="BtnClose" Click="BtnClose_Click" Style="{StaticResource CloseButton}" Width="46" Height="36">
+                        <Path Data="{StaticResource IconClose}" Stroke="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}" StrokeThickness="1.5" Stretch="Uniform" Width="10" Height="10"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+        <!-- ============================== -->
+        <!--  Column 0: 中间主面板  Row 1     -->
+        <!-- ============================== -->
+        <Border Grid.Row="1" Grid.Column="0" Margin="24,24,24,24">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="3*"/>
+                </Grid.RowDefinitions>
+
+                <!-- 标题行 -->
+                <Grid Grid.Row="0" Margin="0,0,0,20">
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock x:Name="DateText" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource Theme.TextPrimary}"/>
+                        <TextBlock Text="专注今天，完成重要的事。" FontSize="13"
+                                   Foreground="{DynamicResource Theme.TextPlaceholder}" Margin="0,4,0,0"/>
+                    </StackPanel>
+                    <Button Content="+ 新建项目" Style="{StaticResource PrimaryButton}"
+                            HorizontalAlignment="Right" VerticalAlignment="Top"
+                            Click="CreateProject_Click"/>
+                </Grid>
+
+                <!-- 统计卡片（2列） -->
+                <Grid Grid.Row="1" Margin="0,0,0,20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <!-- 项目数量 -->
+                    <Border Grid.Column="0" x:Name="StatCard1" Background="{DynamicResource Theme.CardBg}" BorderBrush="{DynamicResource Theme.CardBorder}"
+                            BorderThickness="1" CornerRadius="8" Margin="0,0,8,0" Padding="16">
+                        <StackPanel>
+                            <TextBlock x:Name="StatValue1" Text="0" FontSize="28" FontWeight="Bold" Foreground="#2563EB"/>
+                            <TextBlock Text="项目数量" FontSize="13" Foreground="{DynamicResource Theme.TextMuted}" Margin="0,8,0,0"/>
+                        </StackPanel>
+                    </Border>
+                    <!-- 待办数量 -->
+                    <Border Grid.Column="1" x:Name="StatCard2" Background="{DynamicResource Theme.CardBg}" BorderBrush="{DynamicResource Theme.CardBorder}"
+                            BorderThickness="1" CornerRadius="8" Margin="8,0,0,0" Padding="16">
+                        <StackPanel>
+                            <TextBlock x:Name="StatValue2" Text="0" FontSize="28" FontWeight="Bold" Foreground="#10B981"/>
+                            <TextBlock Text="待办数量" FontSize="13" Foreground="{DynamicResource Theme.TextMuted}" Margin="0,8,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!-- 待办 + 最近更新 双栏 -->
+                <Grid Grid.Row="2" Margin="0,0,0,20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- 今日待办 -->
+                    <Border x:Name="TodoCardBorder" Grid.Column="0" Background="{DynamicResource Theme.CardBg}" BorderBrush="{DynamicResource Theme.CardBorder}"
+                            BorderThickness="1" CornerRadius="8" Margin="0,0,8,0" Padding="20,16">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel x:Name="TodoListPanel">
+                            <TextBlock Text="今日待办" FontSize="14" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource Theme.TextSecondary}" VerticalAlignment="Center" Margin="0,0,0,16"/>
+                            <!-- 待办项1 -->
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                    <CheckBox Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="OEE系统 - MES接口对接" FontSize="13"
+                                               Foreground="{DynamicResource Theme.TextTertiary}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <Border Background="#FEF2F2" CornerRadius="4" Width="24" Height="24" Margin="0,0,16,0">
+                                        <TextBlock Text="高" FontSize="11" Foreground="#EF4444" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <TextBlock Text="10:00" FontSize="12" Foreground="{DynamicResource Theme.TextPlaceholder}"
+                                               Width="60" TextAlignment="Right" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Grid>
+                            <!-- 待办项2 -->
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                    <CheckBox Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="RTSP采集框架 - 优化硬解码" FontSize="13"
+                                               Foreground="{DynamicResource Theme.TextTertiary}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <Border Background="#FEF2F2" CornerRadius="4" Width="24" Height="24" Margin="0,0,16,0">
+                                        <TextBlock Text="高" FontSize="11" Foreground="#EF4444" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <TextBlock Text="14:00" FontSize="12" Foreground="{DynamicResource Theme.TextPlaceholder}"
+                                               Width="60" TextAlignment="Right" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Grid>
+                            <!-- 待办项3 -->
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                    <CheckBox Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="舍弗勒项目 - 现场问题跟进" FontSize="13"
+                                               Foreground="{DynamicResource Theme.TextTertiary}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <Border Background="#FFFBEF" CornerRadius="4" Padding="6,2" Margin="0,0,16,0">
+                                        <TextBlock Text="中" FontSize="11" Foreground="#D97706"/>
+                                    </Border>
+                                    <TextBlock Text="16:00" FontSize="12" Foreground="{DynamicResource Theme.TextPlaceholder}"
+                                               Width="60" TextAlignment="Right" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Grid>
+                            <!-- 待办项4 -->
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                    <CheckBox Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="蓝微电动工具 - 配置工具开发" FontSize="13"
+                                               Foreground="{DynamicResource Theme.TextTertiary}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <Border Background="#EFF6FF" CornerRadius="4" Padding="6,2" Margin="0,0,16,0">
+                                        <TextBlock Text="低" FontSize="11" Foreground="#2563EB"/>
+                                    </Border>
+                                    <TextBlock Text="明天 09:30" FontSize="12" Foreground="{DynamicResource Theme.TextPlaceholder}"
+                                               Width="60" TextAlignment="Right" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Grid>
+                            <!-- 待办项5 -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                    <CheckBox Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="天津经纬恒润 - PLC通讯调试" FontSize="13"
+                                               Foreground="{DynamicResource Theme.TextTertiary}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <Border Background="#EFF6FF" CornerRadius="4" Padding="6,2" Margin="0,0,16,0">
+                                        <TextBlock Text="低" FontSize="11" Foreground="#2563EB"/>
+                                    </Border>
+                                    <TextBlock Text="明天 11:00" FontSize="12" Foreground="{DynamicResource Theme.TextPlaceholder}"
+                                               Width="60" TextAlignment="Right" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                        </ScrollViewer>
+                    </Border>
+
+                    <!-- 最近更新 -->
+                    <Border x:Name="ActivityCardBorder" Grid.Column="1" Background="{DynamicResource Theme.CardBg}" BorderBrush="{DynamicResource Theme.CardBorder}"
+                            BorderThickness="1" CornerRadius="8" Margin="8,0,0,0" Padding="20,16">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel x:Name="ActivityListPanel">
+                            <TextBlock Text="最近更新" FontSize="14" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource Theme.TextSecondary}" VerticalAlignment="Center" Margin="0,0,0,16"/>
+                            <!-- 活动1 -->
+                            <Grid Margin="0,0,0,14">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80"/>
+                                    <ColumnDefinition Width="Auto" MinWidth="80"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="09:30" FontSize="12" Foreground="{DynamicResource Theme.TextPlaceholder}"/>
+                                <TextBlock Grid.Column="1" Text="OEE系统" FontSize="12"
+                                           FontWeight="SemiBold" Foreground="{DynamicResource Theme.TextSecondary}" Margin="0,0,8,0"/>
+                                <TextBlock Grid.Column="2" Text="完成MES接口数据解析模块"
+                                           FontSize="12" Foreground="{DynamicResource Theme.TextMuted}" TextTrimming="CharacterEllipsis"/>
+                            </Grid>
+                            <!-- 活动2 -->
+                            <Grid Margin="0,0,0,14">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80"/>
+                                    <ColumnDefinition Width="Auto" MinWidth="80"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="08:45" FontSize="12" Foreground="{DynamicResource Theme.TextPlaceholder}"/>
+                                <TextBlock Grid.Column="1" Text="RTSP采集框架" FontSize="12"
+                                           FontWeight="SemiBold" Foreground="{DynamicResource Theme.TextSecondary}" Margin="0,0,8,0"/>
+                                <TextBlock Grid.Column="2" Text="增加GPU硬解自动检测"
+                                           FontSize="12" Foreground="{DynamicResource Theme.TextMuted}" TextTrimming="CharacterEllipsis"/>
+                            </Grid>
+                            <!-- 活动3 -->
+                            <Grid Margin="0,0,0,14">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80"/>
+                                    <ColumnDefinition Width="Auto" MinWidth="80"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="昨天 17:20" FontSize="12" Foreground="{DynamicResource Theme.TextPlaceholder}"/>
+                                <TextBlock Grid.Column="1" Text="舍弗勒项目" FontSize="12"
+                                           FontWeight="SemiBold" Foreground="{DynamicResource Theme.TextSecondary}" Margin="0,0,8,0"/>
+                                <TextBlock Grid.Column="2" Text="客户反馈现场已正常运行"
+                                           FontSize="12" Foreground="{DynamicResource Theme.TextMuted}" TextTrimming="CharacterEllipsis"/>
+                            </Grid>
+                            <!-- 活动4 -->
+                            <Grid Margin="0,0,0,14">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80"/>
+                                    <ColumnDefinition Width="Auto" MinWidth="80"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="昨天 16:10" FontSize="12" Foreground="{DynamicResource Theme.TextPlaceholder}"/>
+                                <TextBlock Grid.Column="1" Text="蓝微电动工具" FontSize="12"
+                                           FontWeight="SemiBold" Foreground="{DynamicResource Theme.TextSecondary}" Margin="0,0,8,0"/>
+                                <TextBlock Grid.Column="2" Text="完成配置工具界面开发"
+                                           FontSize="12" Foreground="{DynamicResource Theme.TextMuted}" TextTrimming="CharacterEllipsis"/>
+                            </Grid>
+                            <!-- 活动5 -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80"/>
+                                    <ColumnDefinition Width="Auto" MinWidth="80"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="08-01 15:40" FontSize="12" Foreground="{DynamicResource Theme.TextPlaceholder}"/>
+                                <TextBlock Grid.Column="1" Text="天津经纬恒润" FontSize="12"
+                                           FontWeight="SemiBold" Foreground="{DynamicResource Theme.TextSecondary}" Margin="0,0,8,0"/>
+                                <TextBlock Grid.Column="2" Text="PLC通讯稳定性优化"
+                                           FontSize="12" Foreground="{DynamicResource Theme.TextMuted}" TextTrimming="CharacterEllipsis"/>
+                            </Grid>
+
+                            <TextBlock Text="查看全部 &gt;" FontSize="12" Foreground="#2563EB"
+                                       Cursor="Hand" Margin="0,14,0,0"/>
+                        </StackPanel>
+                        </ScrollViewer>
+                    </Border>
+                </Grid>
+
+                <!-- 项目进度表 -->
+                <Border Grid.Row="3" x:Name="ProjectTableBorder" Background="{DynamicResource Theme.CardBg}" BorderBrush="{DynamicResource Theme.CardBorder}"
+                        BorderThickness="1" CornerRadius="8" Padding="20,16">
+                    <DockPanel>
+                        <Grid DockPanel.Dock="Top" Margin="0,0,0,16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="项目进度" FontSize="14"
+                                       FontWeight="SemiBold" Foreground="{DynamicResource Theme.TextSecondary}" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="ViewHistoryBtn" Grid.Column="1" Text="查看历史 &gt;" FontSize="12" Foreground="#2563EB"
+                                       Cursor="Hand" VerticalAlignment="Center" MouseLeftButtonDown="ViewHistoryBtn_Click"/>
+                        </Grid>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel x:Name="ProjectListPanel">
+                                <!-- 表头 -->
+                                <Grid Height="32" VerticalAlignment="Center">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="90"/>
+                                        <ColumnDefinition Width="130"/>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition Width="50"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="项目名称" FontSize="12"
+                                               Foreground="{DynamicResource Theme.TextPlaceholder}" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="阶段" FontSize="12"
+                                               Foreground="{DynamicResource Theme.TextPlaceholder}" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="2" Text="进度" FontSize="12"
+                                               Foreground="{DynamicResource Theme.TextPlaceholder}" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="3" Text="计划完成" FontSize="12"
+                                               Foreground="{DynamicResource Theme.TextPlaceholder}" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="4" Text="优先级" FontSize="12"
+                                               Foreground="{DynamicResource Theme.TextPlaceholder}" VerticalAlignment="Center" TextAlignment="Center"/>
+                                    <TextBlock Grid.Column="5" Text="操作" FontSize="12"
+                                               Foreground="{DynamicResource Theme.TextPlaceholder}" VerticalAlignment="Center"/>
+                                </Grid>
+                                <Border Background="{DynamicResource Theme.Divider}" Height="1" Margin="0,0,0,4"/>
+
+                                <!-- 行1: RTSP采集框架 -->
+                                <Border BorderBrush="{DynamicResource Theme.InputBg}" BorderThickness="0,0,0,1" Padding="0,8">
+                                    <Grid VerticalAlignment="Center">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="90"/>
+                                            <ColumnDefinition Width="130"/>
+                                            <ColumnDefinition Width="80"/>
+                                            <ColumnDefinition Width="70"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Grid Width="24" Height="24" Margin="0,0,10,0">
+                                                <Ellipse Fill="#2563EB"/>
+                                                <Path Data="{StaticResource IconMonitor}" Width="14" Height="14"
+                                                      Stretch="Uniform" Fill="White"
+                                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Grid>
+                                            <StackPanel VerticalAlignment="Center">
+                                                <TextBlock Text="RTSP采集框架" FontSize="13" FontWeight="Medium" Foreground="{DynamicResource Theme.TextTertiary}"/>
+                                                <TextBlock Text="多路相机采集与硬解优化" FontSize="11" Foreground="{DynamicResource Theme.TextPlaceholder}"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <Border Grid.Column="1" Background="#EFF6FF" CornerRadius="4"
+                                                Padding="8,2" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                            <TextBlock Text="开发中" FontSize="11" Foreground="#2563EB"/>
+                                        </Border>
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Grid Width="80" Height="6" Margin="0,0,8,0" VerticalAlignment="Center">
+                                                <Border Background="{DynamicResource Theme.ProgressTrack}" CornerRadius="3"/>
+                                                <Border Background="#2563EB" CornerRadius="3"
+                                                        HorizontalAlignment="Left" Width="64"/>
+                                            </Grid>
+                                            <TextBlock Text="80%" FontSize="12" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="3" Text="08-15" FontSize="13" VerticalAlignment="Center"/>
+                                        <Border Grid.Column="4" Background="#FEF2F2" CornerRadius="4"
+                                                Width="24" Height="24" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <TextBlock Text="高" FontSize="11" Foreground="#EF4444" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </Grid>
+                                </Border>
+
+                                <!-- 行2: OEE系统 -->
+                                <Border BorderBrush="{DynamicResource Theme.InputBg}" BorderThickness="0,0,0,1" Padding="0,8">
+                                    <Grid VerticalAlignment="Center">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="90"/>
+                                            <ColumnDefinition Width="130"/>
+                                            <ColumnDefinition Width="80"/>
+                                            <ColumnDefinition Width="70"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Grid Width="24" Height="24" Margin="0,0,10,0">
+                                                <Ellipse Fill="#10B981"/>
+                                                <Path Data="{StaticResource IconCheck}" Width="14" Height="14"
+                                                      Stretch="Uniform" Fill="White" Stroke="White" StrokeThickness="2"
+                                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Grid>
+                                            <StackPanel VerticalAlignment="Center">
+                                                <TextBlock Text="OEE系统" FontSize="13" FontWeight="Medium" Foreground="{DynamicResource Theme.TextTertiary}"/>
+                                                <TextBlock Text="MES对接与数据上报" FontSize="11" Foreground="{DynamicResource Theme.TextPlaceholder}"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <Border Grid.Column="1" Background="#EFF6FF" CornerRadius="4"
+                                                Padding="8,2" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                            <TextBlock Text="开发中" FontSize="11" Foreground="#2563EB"/>
+                                        </Border>
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Grid Width="80" Height="6" Margin="0,0,8,0" VerticalAlignment="Center">
+                                                <Border Background="{DynamicResource Theme.ProgressTrack}" CornerRadius="3"/>
+                                                <Border Background="#2563EB" CornerRadius="3"
+                                                        HorizontalAlignment="Left" Width="48"/>
+                                            </Grid>
+                                            <TextBlock Text="60%" FontSize="12" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="3" Text="08-20" FontSize="13" VerticalAlignment="Center"/>
+                                        <Border Grid.Column="4" Background="#FEF2F2" CornerRadius="4"
+                                                Width="24" Height="24" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <TextBlock Text="高" FontSize="11" Foreground="#EF4444" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </Grid>
+                                </Border>
+
+                                <!-- 行3: 舍弗勒项目 -->
+                                <Border BorderBrush="{DynamicResource Theme.InputBg}" BorderThickness="0,0,0,1" Padding="0,8">
+                                    <Grid VerticalAlignment="Center">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="90"/>
+                                            <ColumnDefinition Width="130"/>
+                                            <ColumnDefinition Width="80"/>
+                                            <ColumnDefinition Width="70"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Grid Width="24" Height="24" Margin="0,0,10,0">
+                                                <Ellipse Fill="#F59E0B"/>
+                                                <Path Data="{StaticResource IconSliders}" Width="14" Height="14"
+                                                      Stretch="Uniform" Fill="White"
+                                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Grid>
+                                            <StackPanel VerticalAlignment="Center">
+                                                <TextBlock Text="舍弗勒项目" FontSize="13" FontWeight="Medium" Foreground="{DynamicResource Theme.TextTertiary}"/>
+                                                <TextBlock Text="自动化产线改造" FontSize="11" Foreground="{DynamicResource Theme.TextPlaceholder}"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <Border Grid.Column="1" Background="#ECFDF5" CornerRadius="12"
+                                                Padding="8,2" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                            <TextBlock Text="调试中" FontSize="11" Foreground="#059669"/>
+                                        </Border>
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Grid Width="80" Height="6" Margin="0,0,8,0" VerticalAlignment="Center">
+                                                <Border Background="{DynamicResource Theme.ProgressTrack}" CornerRadius="3"/>
+                                                <Border Background="#2563EB" CornerRadius="3"
+                                                        HorizontalAlignment="Left" Width="72"/>
+                                            </Grid>
+                                            <TextBlock Text="90%" FontSize="12" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="3" Text="08-10" FontSize="13" VerticalAlignment="Center"/>
+                                        <Border Grid.Column="4" Background="#FFFBEF" CornerRadius="4"
+                                                Padding="6,2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <TextBlock Text="中" FontSize="11" Foreground="#D97706"/>
+                                        </Border>
+                                    </Grid>
+                                </Border>
+
+                                <!-- 行4: 蓝微电动工具 -->
+                                <Border BorderBrush="{DynamicResource Theme.InputBg}" BorderThickness="0,0,0,1" Padding="0,8">
+                                    <Grid VerticalAlignment="Center">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="90"/>
+                                            <ColumnDefinition Width="130"/>
+                                            <ColumnDefinition Width="80"/>
+                                            <ColumnDefinition Width="70"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Grid Width="24" Height="24" Margin="0,0,10,0">
+                                                <Ellipse Fill="#8B5CF6"/>
+                                                <Path Data="{StaticResource IconGrid}" Width="14" Height="14"
+                                                      Stretch="Uniform" Fill="White"
+                                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Grid>
+                                            <StackPanel VerticalAlignment="Center">
+                                                <TextBlock Text="蓝微电动工具" FontSize="13" FontWeight="Medium" Foreground="{DynamicResource Theme.TextTertiary}"/>
+                                                <TextBlock Text="MES + 扫码配置工具" FontSize="11" Foreground="{DynamicResource Theme.TextPlaceholder}"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <Border Grid.Column="1" Background="#EFF6FF" CornerRadius="4"
+                                                Padding="8,2" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                            <TextBlock Text="开发中" FontSize="11" Foreground="#2563EB"/>
+                                        </Border>
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Grid Width="80" Height="6" Margin="0,0,8,0" VerticalAlignment="Center">
+                                                <Border Background="{DynamicResource Theme.ProgressTrack}" CornerRadius="3"/>
+                                                <Border Background="#2563EB" CornerRadius="3"
+                                                        HorizontalAlignment="Left" Width="36"/>
+                                            </Grid>
+                                            <TextBlock Text="45%" FontSize="12" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="3" Text="08-25" FontSize="13" VerticalAlignment="Center"/>
+                                        <Border Grid.Column="4" Background="#FFFBEF" CornerRadius="4"
+                                                Padding="6,2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <TextBlock Text="中" FontSize="11" Foreground="#D97706"/>
+                                        </Border>
+                                    </Grid>
+                                </Border>
+
+                                <!-- 行5: 天津经纬恒润 -->
+                                <Border BorderBrush="{DynamicResource Theme.InputBg}" BorderThickness="0,0,0,1" Padding="0,8">
+                                    <Grid VerticalAlignment="Center">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="90"/>
+                                            <ColumnDefinition Width="130"/>
+                                            <ColumnDefinition Width="80"/>
+                                            <ColumnDefinition Width="70"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Grid Width="24" Height="24" Margin="0,0,10,0">
+                                                <Ellipse Fill="#06B6D4"/>
+                                                <Path Data="{StaticResource IconLaptop}" Width="14" Height="14"
+                                                      Stretch="Uniform" Fill="White"
+                                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Grid>
+                                            <StackPanel VerticalAlignment="Center">
+                                                <TextBlock Text="天津经纬恒润" FontSize="13" FontWeight="Medium" Foreground="{DynamicResource Theme.TextTertiary}"/>
+                                                <TextBlock Text="PLC通讯调试" FontSize="11" Foreground="{DynamicResource Theme.TextPlaceholder}"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <Border Grid.Column="1" Background="#ECFDF5" CornerRadius="12"
+                                                Padding="8,2" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                            <TextBlock Text="调试中" FontSize="11" Foreground="#059669"/>
+                                        </Border>
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Grid Width="80" Height="6" Margin="0,0,8,0" VerticalAlignment="Center">
+                                                <Border Background="{DynamicResource Theme.ProgressTrack}" CornerRadius="3"/>
+                                                <Border Background="#2563EB" CornerRadius="3"
+                                                        HorizontalAlignment="Left" Width="56"/>
+                                            </Grid>
+                                            <TextBlock Text="70%" FontSize="12" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="3" Text="08-18" FontSize="13" VerticalAlignment="Center"/>
+                                        <Border Grid.Column="4" Background="#EFF6FF" CornerRadius="4"
+                                                Padding="6,2" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                            <TextBlock Text="低" FontSize="11" Foreground="#2563EB"/>
+                                        </Border>
+                                    </Grid>
+                                </Border>
+
+                                <!-- 行6: 浮世达项目 -->
+                                <Border Padding="0,8">
+                                    <Grid VerticalAlignment="Center">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="90"/>
+                                            <ColumnDefinition Width="130"/>
+                                            <ColumnDefinition Width="80"/>
+                                            <ColumnDefinition Width="70"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Grid Width="24" Height="24" Margin="0,0,10,0">
+                                                <Ellipse Fill="{DynamicResource Theme.TextMuted}"/>
+                                                <Path Data="{StaticResource IconCamera}" Width="14" Height="14"
+                                                      Stretch="Uniform" Fill="White"
+                                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Grid>
+                                            <StackPanel VerticalAlignment="Center">
+                                                <TextBlock Text="浮世达项目" FontSize="13" FontWeight="Medium" Foreground="{DynamicResource Theme.TextTertiary}"/>
+                                                <TextBlock Text="视觉检测" FontSize="11" Foreground="{DynamicResource Theme.TextPlaceholder}"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <Border Grid.Column="1" Background="{DynamicResource Theme.Divider}" CornerRadius="12"
+                                                Padding="8,2" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                            <TextBlock Text="需求确认" FontSize="11" Foreground="{DynamicResource Theme.TextMuted}"/>
+                                        </Border>
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Grid Width="80" Height="6" Margin="0,0,8,0" VerticalAlignment="Center">
+                                                <Border Background="{DynamicResource Theme.ProgressTrack}" CornerRadius="3"/>
+                                                <Border Background="#2563EB" CornerRadius="3"
+                                                        HorizontalAlignment="Left" Width="16"/>
+                                            </Grid>
+                                            <TextBlock Text="20%" FontSize="12" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="3" Text="09-05" FontSize="13" VerticalAlignment="Center"/>
+                                        <Border Grid.Column="4" Background="#EFF6FF" CornerRadius="4"
+                                                Padding="6,2" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                            <TextBlock Text="低" FontSize="11" Foreground="#2563EB"/>
+                                        </Border>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </DockPanel>
+                </Border>
+
+            </Grid>
+        </Border>
+
+        <!-- Column 1: 右侧分割条  Row 1 -->
+        <GridSplitter Grid.Row="1" Grid.Column="1" Width="5"
+                      HorizontalAlignment="Center" VerticalAlignment="Stretch"
+                      Background="Transparent" Cursor="SizeWE"
+                      ResizeDirection="Columns" ResizeBehavior="PreviousAndNext"/>
+
+        <!-- ============================== -->
+        <!--  Column 2: 右侧项目详情面板  Row 1-->
+        <!-- ============================== -->
+        <Border x:Name="RightDetailBorder" Grid.Row="1" Grid.Column="2" Background="{DynamicResource Theme.DetailBg}" BorderBrush="{DynamicResource Theme.DetailBorder}" BorderThickness="1" CornerRadius="8" Margin="0,24,24,24">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel x:Name="DetailContentPanel" Margin="24,24,24,24">
+
+                    <!-- 项目标题 -->
+                    <StackPanel Margin="0,0,0,20" Orientation="Horizontal">
+                        <Grid Width="24" Height="24" Margin="0,0,12,0">
+                            <Ellipse x:Name="DetailIconEllipse" Fill="#2563EB" Width="24" Height="24"/>
+                            <TextBlock x:Name="DetailIconLetter" Text="R"
+                                       FontSize="12" FontWeight="Bold" Foreground="White"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock x:Name="DetailProjectName" Text="RTSP采集框架"
+                                       FontSize="16" Foreground="{DynamicResource Theme.TextPrimary}"
+                                       TextTrimming="CharacterEllipsis"/>
+                            <TextBlock x:Name="DetailProjectSubtitle" 
+                                       FontSize="12" Foreground="{DynamicResource Theme.TextPlaceholder}"
+                                       VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
+                                       Margin="0,2,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- 标签页 -->
+                    <Border BorderBrush="{DynamicResource Theme.Divider}" BorderThickness="0,0,0,1" Margin="0,0,0,20">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                <Border x:Name="TabOverviewBorder" BorderBrush="#2563EB" BorderThickness="0,0,0,2"
+                                        Margin="0,10,16,0" Padding="0,0,0,8" Cursor="Hand"
+                                        MouseLeftButtonDown="Tab_MouseLeftButtonDown" Tag="概览">
+                                    <TextBlock x:Name="TabOverviewText" Text="概览" FontSize="13"
+                                               Foreground="#2563EB" FontWeight="Medium"/>
+                                </Border>
+                                <Border x:Name="TabLogsBorder" BorderThickness="0,0,0,2"
+                                        Margin="0,0,16,0" Padding="0,0,0,8" Cursor="Hand"
+                                        MouseLeftButtonDown="Tab_MouseLeftButtonDown" Tag="日志">
+                                    <TextBlock x:Name="TabLogsText" Text="日志" FontSize="13"
+                                               Foreground="{DynamicResource Theme.TextMuted}" Margin="0,10,0,0"/>
+                                </Border>
+                                <Border x:Name="TabIssuesBorder" BorderThickness="0,0,0,2"
+                                        Padding="0,0,0,8" Cursor="Hand"
+                                        MouseLeftButtonDown="Tab_MouseLeftButtonDown" Tag="问题" Margin="0,10,0,0">
+                                    <TextBlock x:Name="TabIssuesText" Text="问题" FontSize="13"
+                                               Foreground="{DynamicResource Theme.TextMuted}"/>
+                                </Border>
+                            </StackPanel>
+                            
+                            <Button x:Name="BtnEditProject" Grid.Column="1" Content="编辑项目"
+                                    Style="{StaticResource PrimaryButton}"
+                                    VerticalAlignment="Center"
+                                    FontSize="12" Padding="12,6"
+                                    Margin="12,0,0,0" Click="BtnEditProject_Click"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- 概览标签内容 -->
+                    <StackPanel x:Name="OverviewPanel">
+
+                        <!-- 进度 -->
+                        <StackPanel Margin="0,0,0,24">
+                            <TextBlock Text="进度" FontSize="13" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource Theme.TextSecondary}" Margin="0,0,0,12"/>
+                            <StackPanel Orientation="Horizontal">
+                                <!-- 环形进度图 -->
+                                <Grid Width="80" Height="80" Margin="0,0,20,0">
+                                    <Ellipse Stroke="{DynamicResource Theme.ProgressTrack}" StrokeThickness="8"
+                                             Width="80" Height="80"/>
+                                    <Ellipse x:Name="DetailProgressEllipse" Stroke="#2563EB" StrokeThickness="8"
+                                             Width="80" Height="80" StrokeDashArray="0,28.274"
+                                             RenderTransformOrigin="0.5,0.5">
+                                        <Ellipse.RenderTransform>
+                                            <RotateTransform Angle="-90"/>
+                                        </Ellipse.RenderTransform>
+                                    </Ellipse>
+                                    <TextBlock x:Name="DetailProgressPercent" Text="0%" FontSize="14" FontWeight="Bold"
+                                               Foreground="{DynamicResource Theme.TextPrimary}"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Grid>
+                                <!-- 进度详情 -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Grid.Column="0" Grid.Row="0" Text="当前阶段"
+                                               FontSize="12" Foreground="{DynamicResource Theme.TextPlaceholder}"
+                                               Margin="0,0,0,8"/>
+                                    <TextBlock x:Name="DetailStage" Grid.Column="1" Grid.Row="0" Text="开发中"
+                                               FontSize="12" Foreground="{DynamicResource Theme.TextTertiary}"
+                                               Margin="0,0,0,8"/>
+
+                                    <TextBlock Grid.Column="0" Grid.Row="1" Text="已用时间"
+                                               FontSize="12" Foreground="{DynamicResource Theme.TextPlaceholder}"
+                                               Margin="0,0,0,8"/>
+                                    <TextBlock x:Name="DetailElapsedDays" Grid.Column="1" Grid.Row="1" Text="34 天"
+                                               FontSize="12" Foreground="{DynamicResource Theme.TextTertiary}"
+                                               Margin="0,0,0,8"/>
+
+                                    <TextBlock Grid.Column="0" Grid.Row="2" Text="剩余时间"
+                                               FontSize="12" Foreground="{DynamicResource Theme.TextPlaceholder}"/>
+                                    <TextBlock x:Name="DetailRemainingDays" Grid.Column="1" Grid.Row="2" Text="12 天"
+                                               FontSize="12" Foreground="{DynamicResource Theme.TextTertiary}"/>
+                                </Grid>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- 基本信息标题 -->
+                        <TextBlock Text="基本信息" FontSize="13" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource Theme.TextSecondary}" Margin="0,0,0,12"/>
+
+                        <!-- 基本信息网格 -->
+                        <Grid Margin="0,0,0,24">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Column="0" Grid.Row="0" Text="项目类型" FontSize="12"
+                                       Foreground="{DynamicResource Theme.TextPlaceholder}" Margin="0,0,0,10"/>
+                            <TextBlock x:Name="DetailProjectType" Grid.Column="1" Grid.Row="0" Text="软件开发"
+                                       FontSize="12" Foreground="{DynamicResource Theme.TextTertiary}" Margin="0,0,0,10"/>
+
+                            <TextBlock Grid.Column="0" Grid.Row="1" Text="开始日期" FontSize="12"
+                                       Foreground="{DynamicResource Theme.TextPlaceholder}" Margin="0,0,0,10"/>
+                            <TextBlock x:Name="DetailStartDate" Grid.Column="1" Grid.Row="1" Text="2026-07-01"
+                                       FontSize="12" Foreground="{DynamicResource Theme.TextTertiary}" Margin="0,0,0,10"/>
+
+                            <TextBlock Grid.Column="0" Grid.Row="2" Text="计划完成" FontSize="12"
+                                       Foreground="{DynamicResource Theme.TextPlaceholder}" Margin="0,0,0,10"/>
+                            <TextBlock x:Name="DetailPlanEndDate" Grid.Column="1" Grid.Row="2" Text="2026-08-15"
+                                       FontSize="12" Foreground="{DynamicResource Theme.TextTertiary}" Margin="0,0,0,10"/>
+
+                            <TextBlock Grid.Column="0" Grid.Row="4" Text="优先级" FontSize="12"
+                                       Foreground="{DynamicResource Theme.TextPlaceholder}" Margin="0,0,0,10"/>
+                            <Border x:Name="DetailPriorityBorder" Grid.Column="1" Grid.Row="4"
+                                    Background="#FEF2F2" CornerRadius="4"
+                                    Width="24" Height="24" HorizontalAlignment="Left" Margin="0,0,0,10">
+                                <TextBlock x:Name="DetailPriorityText" Text="高" FontSize="11" Foreground="#EF4444" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+
+                            <TextBlock Grid.Column="0" Grid.Row="5" Text="描述" FontSize="12"
+                                       Foreground="{DynamicResource Theme.TextPlaceholder}" Margin="0,0,0,4"/>
+                            <TextBlock x:Name="DetailDescription" Grid.Column="1" Grid.Row="5"
+                                       Text="基于 FFmpeg.AutoGen 的多路 RTSP 采集框架"
+                                       FontSize="12" Foreground="{DynamicResource Theme.TextMuted}"
+                                       TextWrapping="Wrap" Margin="0,0,0,10"/>
+                        </Grid>
+
+                        <!-- 当前任务 -->
+                        <StackPanel Margin="0,0,0,24">
+                            <TextBlock Text="当前任务" FontSize="13" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource Theme.TextSecondary}" Margin="0,0,0,12"/>
+                            <TextBlock x:Name="DetailCurrentTask" Text="优化硬解码性能，支持自动选择最优解码器"
+                                       FontSize="12" Foreground="{DynamicResource Theme.TextTertiary}"
+                                       TextWrapping="Wrap"/>
+                        </StackPanel>
+
+                        <!-- 下一步计划 -->
+                        <StackPanel Margin="0,0,0,24">
+                            <TextBlock Text="下一步计划" FontSize="13" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource Theme.TextSecondary}" Margin="0,0,0,12"/>
+                            <TextBlock x:Name="DetailNextPlan" Text="增加音频采集支持，完善性能监控模块"
+                                       FontSize="12" Foreground="{DynamicResource Theme.TextTertiary}"
+                                       TextWrapping="Wrap"/>
+                        </StackPanel>
+
+                    </StackPanel>
+
+                    <!-- 日志标签内容（代码动态填充） -->
+                    <StackPanel x:Name="LogsPanel" Visibility="Collapsed"/>
+
+                    <!-- 问题标签内容（代码动态填充） -->
+                    <StackPanel x:Name="IssuesPanel" Visibility="Collapsed"/>
+
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+        </Grid>
+        </Border>
+    </Border>
+</Window>
